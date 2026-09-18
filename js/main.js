@@ -11,7 +11,7 @@
 	/*---------------------------------------------------- */
 	/* Preloader
 	------------------------------------------------------ */ 
-   $(window).load(function() {
+   $(window).on('load', function() {
 
       // will first fade out the loading animation 
     	$("#loader").fadeOut("slow", function(){
@@ -27,7 +27,7 @@
   	/*----------------------------------------------------*/
   	/* Flexslider
   	/*----------------------------------------------------*/
-  	$(window).load(function() {
+  	$(window).on('load', function() {
 
 	  	$('#hero-slider').flexslider({
 	   	namespace: "flex-",
@@ -58,17 +58,6 @@
 			}
 	   });
 
-	   $('#testimonial-slider').flexslider({
-	   	namespace: "flex-",
-	      controlsContainer: "",
-	      animation: 'slide',
-	      controlNav: true,
-	      directionNav: false,
-	      smoothHeight: true,
-	      slideshowSpeed: 7000,
-	      animationSpeed: 600,
-	      randomize: false,
-	   });
 
    });
 
@@ -208,15 +197,13 @@
     });
 
 
-   /*----------------------------------------------------*/
-	/*  Placeholder Plugin Settings
-	------------------------------------------------------ */  	 
-	$('input, textarea').placeholder()  
-
-   
 	/*----------------------------------------------------*/
 	/*	contact form
 	------------------------------------------------------*/
+
+	/* Web3Forms access key — get a free one at https://web3forms.com
+	   (it is safe to publish; it only lets people send mail TO you) */
+	var WEB3FORMS_ACCESS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
 
 	/* local validation */
 	$('#contactForm').validate({
@@ -225,44 +212,37 @@
 		submitHandler: function(form) {
 
 			var sLoader = $('#submit-loader');
+			var warning = $('#message-warning');
 
-			$.ajax({      	
+			if (WEB3FORMS_ACCESS_KEY.indexOf("YOUR_") === 0) {
+				warning.text("The contact form isn't set up yet. Please try again later.").fadeIn();
+				return;
+			}
 
-		      type: "POST",
-		      url: "inc/sendEmail.php",
-		      data: $(form).serialize(),
-		      beforeSend: function() { 
+			var data = new FormData(form);
+			data.append("access_key", WEB3FORMS_ACCESS_KEY);
+			data.append("from_name", "Podzilla website");
+			if (!data.get("subject")) data.set("subject", "New message from the Podzilla website");
 
-		      	sLoader.fadeIn(); 
+			sLoader.fadeIn();
 
-		      },
-		      success: function(msg) {
-
-	            // Message was sent
-	            if (msg == 'OK') {
-	            	sLoader.fadeOut(); 
-	               $('#message-warning').hide();
-	               $('#contactForm').fadeOut();
-	               $('#message-success').fadeIn();   
-	            }
-	            // There was an error
-	            else {
-	            	sLoader.fadeOut(); 
-	               $('#message-warning').html(msg);
-		            $('#message-warning').fadeIn();
-	            }
-
-		      },
-		      error: function() {
-
-		      	sLoader.fadeOut(); 
-		      	$('#message-warning').html("Something went wrong. Please try again.");
-		         $('#message-warning').fadeIn();
-
-		      }
-
-	      });     		
-  		}
+			fetch("https://api.web3forms.com/submit", { method: "POST", body: data })
+				.then(function(res) { return res.json(); })
+				.then(function(json) {
+					sLoader.fadeOut();
+					if (json.success) {
+						warning.hide();
+						$('#contactForm').fadeOut();
+						$('#message-success').fadeIn();
+					} else {
+						warning.text(json.message || "Something went wrong. Please try again.").fadeIn();
+					}
+				})
+				.catch(function() {
+					sLoader.fadeOut();
+					warning.text("Something went wrong. Please try again.").fadeIn();
+				});
+		}
 
 	});
 	

@@ -8,29 +8,35 @@
 
 - **Hero** — full-screen slider: *"Say hello to Podzilla"*
 - **Who Are We** — the show's goal, mission, approach and process
-- **Things We Talk About** — Anime, Gaming, Movies and Current Affairs
-- **Portfolio** — image gallery with pop-up previews
+- **Things We Talk About** — Movies, Gaming, Anime and Current Affairs, each with a pop-up description
 - **Meet Our Team** — the hosts, with photos
-- **Get In Touch With Us** — contact form and contact details
+- **Get In Touch With Us** — contact form for topic ideas, takes and questions
 
 ## Tech Stack
 
 - HTML5 and CSS3
-- jQuery with plugins: FlexSlider (sliders), Magnific Popup (lightbox), Waypoints (scroll animations), FitText and jQuery Validate
+- jQuery 3.7 with plugins: FlexSlider (hero slider), Magnific Popup (pop-ups), Waypoints (nav highlighting), FitText and jQuery Validate
 - Font Awesome icons, Merriweather and Raleway fonts
-- PHP (`inc/sendEmail.php`) for the contact form
+- [Web3Forms](https://web3forms.com) for the contact form (no server needed)
 
 ## Running Locally
 
-It's a static site, so you can just open `index.html` in a browser. To test the contact form you need a PHP server:
+It's a static site with no build step. Serve the folder with any static server:
 
 ```bash
-php -S localhost:8000
+python3 -m http.server 8000
 ```
 
 Then visit <http://localhost:8000>.
 
-> **Note:** GitHub Pages doesn't run PHP, so the contact form won't send email on the live site.
+## Contact Form Setup
+
+The contact form sends messages through [Web3Forms](https://web3forms.com), which works on GitHub Pages.
+
+1. Go to [web3forms.com](https://web3forms.com), enter the email address that should receive messages, and copy the access key they send you.
+2. In `js/main.js`, replace `YOUR_WEB3FORMS_ACCESS_KEY` with your key.
+
+The access key is safe to publish, because it only allows sending messages *to* you. Until a key is set, the form shows a "not set up yet" message instead of failing silently.
 
 ## Project Structure
 
@@ -40,9 +46,8 @@ Podzilla/
 ├── Pod-merch           # Placeholder page for future merch
 ├── css/                # Base, layout, vendor styles, Font Awesome
 ├── fonts/              # Merriweather and Raleway webfonts
-├── js/                 # jQuery, plugins and main.js
-├── images/             # Hero, portfolio and team photos
-└── inc/sendEmail.php   # Contact form handler
+├── js/                 # jQuery, plugins and main.js (incl. contact form)
+└── images/             # Hero, topic and team photos
 ```
 
 ## Credits

@@ -1579,6 +1579,11 @@ ul#nav li.current a:after {
 	border-right: 1px solid rgba(200, 200, 200, 0.1);
 }
 
+.popup-modal .link-box a:only-child {
+	width: 100%;
+	border-right: none;
+}
+
 .popup-modal .link-box a:hover {
 	background: #fdc501;
 	color: #000000;
